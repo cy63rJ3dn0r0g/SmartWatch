@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clock</title>
+</head>
+<body>
+    <style>
+        .frame {
+            width: 600px;
+            height: 600px;
+            background: rgb(75, 1, 75);
+            margin-top: -300px;
+            margin-left: -300px;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+        }
+        .center {
+            margin-top: -300px;
+            margin-left: -300px;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+        }
+        .clock {
+            height: 350px;
+            width: 350px;
+            border-radius: 50%;
+            background: rgb(24, 24, 24);
+            position: absolute;
+            top: 125px;
+            left: 125px;
+        }
+        /* .round {
+            border-radius: 50%;
+            position: absolute;
+            width: 320px;
+            height: 320px;
+            top: 130px;
+            left: 130px;
+            stroke: 2;
+            stroke-dasharray: 625;
+            animation: round 10s linear infinite;
+        } */
+        .spinner {
+            position: absolute;
+            width: 330px;
+            height: 330px;
+            top: 135px;
+            left: 135px;
+            background-color: transparent;
+        }
+        .spinner circle {
+            stroke: goldenrod;
+            stroke-width: 4;
+            fill: transparent;
+            stroke-dasharray: 625;
+            animation: spinner 10s linear infinite;
+            transform-origin: center center;
+            transform: rotate(90deg);
+            position: absolute;
+            z-index: 5;
+        }
+        .line {
+            border: 8px dotted #fffefe;
+            height: 280px;
+            width: 280px;
+            position: absolute;
+            left: 300px;
+            top: 300px;
+            transform: translate(-50%, -50%);
+            border-radius: 50%;
+        }
+        .icon {
+            width: 25px;
+            height: 25px;
+            position: absolute;
+            background: red;
+            transform: rotate(-45deg);
+            top: 350px;
+            left: 200px;
+            animation: beat 1.1s ease-in-out infinite;
+        }
+        .icon::before,
+        .icon::after {
+            content: "";
+            background: red;
+            border-radius: 50%;
+            height: 25px;
+            width: 25px;
+            position: absolute;
+        }
+        .icon::after {
+            left: 10px;
+            bottom: 0px;
+        }
+        .icon::before {
+            right: 0px;
+            bottom: 10px;
+        }
+        .beat {
+            position: absolute;
+            top: 350px;
+            left: 235px;
+            color: aliceblue;
+            font-size: 30px ;
+        }
+        .cal {
+            position: absolute;
+            top: 350px;
+            left: 290px;
+            color: aliceblue;
+            font-size: 30px;
+            width: 150px;
+        }
+        .date {
+            color: aliceblue;
+            font-size: 30px;
+            position: absolute;
+            top: 230px;
+            left: 190px;
+            text-transform: uppercase;
+            width: 250px;
+        }
+        .time {
+            color: aliceblue;
+            font-size: 60px;
+            position: absolute;
+            top: 265px;
+            left: 230px;
+            height: 200px;
+            width: 200px;
+        }
+        @keyframes beat {
+            from {transform: scale(1.25) rotate(-45deg);}
+            from {transform: scale(0.65) rotate(-45deg);}
+        }
+        @keyframes spinner {
+            from {
+                stroke-dashoffset: 625;
+                transform: rotate(-90deg) scaleY(1);
+                stroke: yellowgreen;
+            }
+            50% {
+                stroke-dashoffset: 0;
+                transform: rotate(-90deg) scaleY(1);
+            }
+            50.01% {
+                stroke: goldenrod;
+                transform: rotate(-90deg) scaleY(-1);
+            }
+            to {
+                stroke: yellowgreen;
+                stroke-dashoffset: 625;
+                transform: rotate(-90deg) scaleY(-1);
+            }
+        }
+        /* @keyframes round {
+            0% {
+                border-top: 0px solid blue;
+                border-right:0px solid blue ;
+                border-bottom:0px solid blue ;
+                border-left:0px solid blue ;
+            }
+            25% {
+                border-top: 10px solid blue;
+                border-right:0px solid blue ;
+                border-bottom:0px solid blue ;
+                border-left:0px solid blue ;
+            }
+            50% {
+                border-top: 10px solid blue;
+                border-right:10px solid blue ;
+                border-bottom:0px solid blue ;
+                border-left:0px solid blue ;
+            }
+            75% {
+                border-top: 10px solid blue;
+                border-right:10px solid blue ;
+                border-bottom:10px solid blue ;
+                border-left:0px solid blue ;
+            }
+            100% {
+                border-top: 10px solid blue;
+                border-right:10px solid blue ;
+                border-bottom:10px solid blue ;
+                border-left:10px solid blue ;
+            }
+        } */
+    </style>
+    <div class="frame">
+        <div class="center">
+        <div class="clock"></div>
+            <!-- <div class="round"> -->
+                <svg class="spinner" viewbox="0 0 202 202">
+                    <circle cx="101" cy="101" r="99"></circle>
+                </svg>
+            <div class="line"></div>
+            <div class="date" id="date"></div>
+            <div class="time" id="time"></div>
+            <div class="cal">420 Kcal</div>
+            <div class="heart">
+                <span class="icon"></span>
+                <span class="beat">69</span>
+            </div>
+            </div>
+            </div>
+        </div>
+    </div>
+</body>
+<script>
+
+    const getDate = () => {
+        const dataElement = document.querySelector("#date");
+        const timeElement = document.querySelector("#time");
+
+        const currentDate = new Date();
+        const currentMinutes =
+        currentDate.getMinutes().toString().length === 2
+        ? `${currentDate.getMinutes()}`
+        : `0${currentDate.getMinutes()}`;
+	    const currentTime = `${currentDate.getHours()}:${currentMinutes}`;
+        dataElement.innerHTML = currentDate.toDateString();
+        timeElement.innerHTML = currentTime;
+    };
+        getDate();
+
+</script>
+</html>
